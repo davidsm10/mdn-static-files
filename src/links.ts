@@ -2,52 +2,50 @@ import { CheerioAPI } from "cheerio";
 import fs from "node:fs";
 import path from "node:path";
 
-interface RedirectsData {
-  [from: string]: string;
-}
-const redirectsFile = path.join(
-  process.cwd(),
-  "content/files/en-us/_redirects.txt",
-);
+type MdnPath = string;
+type SourcePath = string;
+type MdnToSourcePathsMap = { [mdnPath: MdnPath]: SourcePath };
+const mdnToSourcePathsMap = getMdnToSourcePathsMap();
 
-export function modifyLinks(dom: CheerioAPI) {
-  const redirects = getRedirects(redirectsFile);
+export default function modifyLinks(dom: CheerioAPI) {
   dom("a").each((_, el) => {
     const link = dom(el);
     const href = link.attr("href");
     if (href) {
-      const newHref = modifyLinkUrl(href, redirects);
+      const newHref = modifyLinkUrl(href);
       link.attr("href", newHref);
     }
   });
 }
 
-export function modifyLinkUrl(sourceUrl: string, redirects: RedirectsData) {
-  if (!sourceUrl.startsWith("/")) return sourceUrl;
-  
-  const url = new URL("http://localhost" + sourceUrl);
-  url.pathname = url.pathname.toLowerCase();
-  url.pathname = redirects[url.pathname] || url.pathname;
-  url.pathname = url.pathname.replace("/en-us/docs", "");
-  if (!url.pathname.endsWith("/")) url.pathname += "/";
-  url.pathname += "index.html";
-  url.pathname = url.pathname
-    .replaceAll("::", "_doblecolon_")
-    .replaceAll(":", "_colon_");
-
+function modifyLinkUrl(mdnUrl: string) {
+  if (!mdnUrl.startsWith("/")) return mdnUrl;
+  const url = new URL("http://localhost" + mdnUrl);
+  url.pathname = mdnToSourcePathsMap[url.pathname] || url.pathname;
+  url.pathname = url.pathname.replace("/en-us", "");
+  url.pathname += "/index.html";
   return url.pathname + url.hash;
 }
 
-export function getRedirects(filePath: string) {
-  const redirectsData = fs.readFileSync(filePath, {
-    encoding: "utf-8",
-  });
-  const lines = redirectsData.split("\n");
-  const redirects: { [from: string]: string } = {};
-  for (const line of lines) {
-    const [from, to] = line.split("\t").map((val) => val.trim().toLowerCase());
-    redirects[from] = to;
+function getMdnToSourcePathsMap() {
+  const metadataFilePath = path.join(
+    process.cwd(),
+    "content/build/en-us/metadata.json",
+  );
+  interface FileMetadata {
+    mdn_url: string;
+    source: {
+      folder: string;
+    };
+  }
+  const filesMetadata = JSON.parse(
+    fs.readFileSync(metadataFilePath, { encoding: "utf-8" }),
+  ) as FileMetadata[];
+
+  const pathsMap: MdnToSourcePathsMap = {};
+  for (const entry of filesMetadata) {
+    pathsMap[entry.mdn_url] = entry.source.folder;
   }
 
-  return redirects;
+  return pathsMap;
 }

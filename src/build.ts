@@ -1,7 +1,7 @@
 import path from "node:path";
 import fs from "node:fs/promises";
 import { getHtml } from "./mdn.js";
-import { modifyLinks } from "./links.js";
+import modifyLinks from "./links.js";
 import { load as loadCheerioInstance } from "cheerio";
 
 const inputDir = path.join(process.cwd(), "content/build/en-us/docs");
