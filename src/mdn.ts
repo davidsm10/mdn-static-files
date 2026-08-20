@@ -1,10 +1,14 @@
 export interface BodySection {
-  type: "prose" | string;
+  type: "prose" | "specifications";
   value: {
     id: string | null;
     title: string | null;
     isH3: boolean;
-    content: string;
+    content?: string;
+    specifications?: {
+      bcdSpecificationURL: string;
+      title: string;
+    }[];
   };
 }
 
@@ -28,7 +32,7 @@ export function getHtml(fileContent: string): string {
   const title = mdnFileData.doc.titleHTML;
   finalOutput += `<h1>${title}</h1>`;
   for (const section of mdnFileData.doc.body) {
-    if (section.type === "prose" && section.value.content) {
+    if (section.type === "prose" || section.type === "specifications") {
       const value = section.value;
       if (value.title) {
         if (value.isH3) {
@@ -38,7 +42,18 @@ export function getHtml(fileContent: string): string {
         }
       }
 
-      finalOutput += value.content;
+      let content: string;
+      if (value.content) {
+        content = value.content;
+      } else if (value.specifications) {
+        content = `<ul>
+        ${value.specifications.map((spec) => {
+          return `<li><a href="${spec.bcdSpecificationURL}" target="_blank">${spec.title}</a></li>`;
+        })}
+        </ul>`;
+      }
+
+      finalOutput += content!;
     }
   }
 
