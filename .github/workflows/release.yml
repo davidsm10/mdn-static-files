@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Build MDN content
+        run: |
+          cd content
+          npm ci
+          npm run build
+
+      - name: Build documents
+        run: |
+          npm install -g pnpm
+          pnpm install
+          pnpm run build
+          pnpm build-docs
+
+      - name: Pack documents
+        run: pnpm pack-docs
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          body: |
+            Auto-generated release
+          fail_on_unmatched_files: true
+          files: mdn.tar.xz
