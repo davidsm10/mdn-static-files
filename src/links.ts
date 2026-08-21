@@ -21,10 +21,14 @@ export default function modifyLinks(dom: CheerioAPI) {
 function modifyLinkUrl(mdnUrl: string) {
   if (!mdnUrl.startsWith("/")) return mdnUrl;
   const url = new URL("http://localhost" + mdnUrl);
-  url.pathname = mdnToSourcePathsMap[url.pathname] || url.pathname;
-  url.pathname = url.pathname.replace("/en-us", "");
-  url.pathname += "/index.html";
-  return url.pathname + url.hash;
+  const sourcePath = mdnToSourcePathsMap[url.pathname];
+  let finalUrl: string;
+  if (sourcePath) {
+    finalUrl = sourcePath.replace("en-us", "") + "/index.html" + url.hash;
+  } else {
+    finalUrl = "https://developer.mozilla.org" + mdnUrl;
+  }
+  return finalUrl;
 }
 
 function getMdnToSourcePathsMap() {
