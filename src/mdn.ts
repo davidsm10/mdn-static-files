@@ -1,3 +1,5 @@
+import { escapeText } from "./html.js";
+
 export interface BodySection {
   type: "prose" | "specifications";
   value: {
@@ -58,18 +60,12 @@ export function getHtml(fileContent: string): string {
   }
 
   const mdnUrl = "https://developer.mozilla.org" + mdnFileData.doc.mdn_url;
-  const sourceUrl = mdnFileData.doc.source.github_url;
 
-  finalOutput += `<h2>Upstream</h2>
-  <ul>
-  <li>
-  <a href="${mdnUrl}" target="_blank">Page</a>
-  </li>
-  <li>
-  <a href="${sourceUrl}" target="_blank">Source</a>
-  </li>
-  </ul>
-  `;
+  finalOutput +=
+    "<footer>" +
+    `<a href="${mdnUrl}" target="_blank">${escapeText(mdnFileData.doc.title)}</a> by <a href="${mdnUrl + "/contributors.txt"}" target="_blank">Mozilla contributors</a>, ` +
+    `licensed under <a href="https://creativecommons.org/licenses/by-sa/2.5/" target="_blank">CC-BY-SA 2.5</a>.` +
+    "</footer>";
 
   return finalOutput;
 }
