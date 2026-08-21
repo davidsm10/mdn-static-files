@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import { getHtml } from "./mdn.js";
 import modifyLinks from "./links.js";
 import { load as loadCheerioInstance } from "cheerio";
+import { minifyHtml } from "./html.js";
 
 const inputDir = path.join(process.cwd(), "content/build/en-us/docs");
 const outputDir = path.join(process.cwd(), "output");
@@ -35,6 +36,7 @@ async function build() {
     const dom = loadCheerioInstance(html, {}, false);
     modifyLinks(dom);
     html = dom.html();
+    html = await minifyHtml(html);
     await fs.writeFile(outputFilePath, html);
   }
 }

@@ -14,7 +14,8 @@
     "prettier": "^3.9.6"
   },
   "dependencies": {
-    "tar-xz": "^6.1.1",
-    "cheerio": "^1.2.0"
+    "cheerio": "^1.2.0",
+    "html-minifier-next": "^8.1.0",
+    "tar-xz": "^6.1.1"
   }
 }
