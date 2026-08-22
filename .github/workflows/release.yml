@@ -31,6 +31,7 @@ jobs:
           pnpm install
           pnpm run build
           pnpm build-docs
+          pnpm minify-docs
 
       - name: Pack documents
         run: pnpm pack-docs

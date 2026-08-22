@@ -20,6 +20,7 @@ cd ..
 pnpm install
 pnpm run build
 pnpm run build-docs
+pnpm run minify-docs
 ```
 
 Optionally you can run the next command to pack all the files in a in .tar.xz archive (which should be less than 10MB):
