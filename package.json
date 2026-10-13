@@ -7,7 +7,7 @@
     "check": "tsc --noEmit && prettier --check .",
     "format": "prettier --write .",
     "build-docs": "node .",
-    "minify-docs": "html-minifier-next -I output -O output -p comprehensive --continue-on-parse-error",
+    "minify-docs": "html-minifier-next -I output -O output",
     "pack-docs": "node dist/pack.js"
   },
   "devDependencies": {

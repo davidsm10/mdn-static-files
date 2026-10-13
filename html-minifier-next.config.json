@@ -1,0 +1,6 @@
+{
+  "$schema": "./node_modules/html-minifier-next/html-minifier-next.schema.json",
+  "collapseWhitespace": true,
+  "removeComments": true,
+  "continueOnParseError": true
+}
