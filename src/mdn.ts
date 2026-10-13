@@ -49,9 +49,11 @@ export function getHtml(fileContent: string): string {
         content = value.content;
       } else if (value.specifications) {
         content = `<ul>
-        ${value.specifications.map((spec) => {
-          return `<li><a href="${spec.bcdSpecificationURL}" target="_blank">${spec.title}</a></li>`;
-        })}
+        ${value.specifications
+          .map((spec) => {
+            return `<li><a href="${spec.bcdSpecificationURL}" target="_blank">${spec.title}</a></li>`;
+          })
+          .join("\n")}
         </ul>`;
       }
 
