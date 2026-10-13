@@ -25,13 +25,17 @@ jobs:
           npm ci
           npm run build
 
-      - name: Build documents
+      - name: Build project
         run: |
           npm install -g pnpm
           pnpm install
           pnpm run build
-          pnpm build-docs
-          pnpm minify-docs
+
+      - name: Build documents
+        run: pnpm build-docs
+
+      - name: Minify documents
+        run: pnpm minify-docs
 
       - name: Pack documents
         run: pnpm pack-docs
