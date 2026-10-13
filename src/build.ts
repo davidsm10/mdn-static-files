@@ -32,7 +32,7 @@ async function build() {
     await fs.mkdir(path.dirname(outputFilePath), { recursive: true });
     const fileContent = await fs.readFile(filePath, { encoding: "utf-8" });
     let html = getHtml(fileContent);
-    const dom = loadCheerioInstance(html, {}, false);
+    const dom = loadCheerioInstance(html, {});
     modifyLinks(dom);
     html = dom.html();
     await fs.writeFile(outputFilePath, html);

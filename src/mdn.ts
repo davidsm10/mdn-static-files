@@ -29,18 +29,18 @@ export interface MdnFileData {
 export function getHtml(fileContent: string): string {
   const mdnFileData = JSON.parse(fileContent) as MdnFileData;
 
-  let finalOutput = "";
+  let body = "";
 
   const title = mdnFileData.doc.titleHTML;
-  finalOutput += `<h1>${title}</h1>`;
+  body += `<h1>${title}</h1>`;
   for (const section of mdnFileData.doc.body) {
     if (section.type === "prose" || section.type === "specifications") {
       const value = section.value;
       if (value.title) {
         if (value.isH3) {
-          finalOutput += `<h3 id="${value.id}">${value.title}</h3>`;
+          body += `<h3 id="${value.id}">${value.title}</h3>`;
         } else {
-          finalOutput += `<h2 id="${value.id}">${value.title}</h2>`;
+          body += `<h2 id="${value.id}">${value.title}</h2>`;
         }
       }
 
@@ -55,17 +55,24 @@ export function getHtml(fileContent: string): string {
         </ul>`;
       }
 
-      finalOutput += content!;
+      body += content!;
     }
   }
 
   const mdnUrl = "https://developer.mozilla.org" + mdnFileData.doc.mdn_url;
 
-  finalOutput +=
+  body +=
     "<footer>" +
     `<a href="${mdnUrl}" target="_blank">${escapeText(mdnFileData.doc.title)}</a> by <a href="${mdnUrl + "/contributors.txt"}" target="_blank">Mozilla contributors</a>, ` +
     `licensed under <a href="https://creativecommons.org/licenses/by-sa/2.5/" target="_blank">CC-BY-SA 2.5</a>.` +
     "</footer>";
 
-  return finalOutput;
+  const document =
+    '<!DOCTYPE html><html lang="en"><head>\n' +
+    '<meta charset="UTF-8">\n' +
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+    `<title>${mdnFileData.doc.title}</title>\n` +
+    `</head><body>${body}</body></html>`;
+
+  return document;
 }
